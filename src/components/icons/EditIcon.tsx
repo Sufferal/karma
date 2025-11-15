@@ -1,4 +1,10 @@
-export const EditIcon = ({ width, height, color }) => {
+type EditIconProps = {
+  width?: string | number;
+  height?: string | number;
+  color?: string;
+};
+
+export const EditIcon = ({ width, height, color }: EditIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

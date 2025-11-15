@@ -9,7 +9,8 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
 };
 
-const base = 'font-semibold py-2 px-5 rounded-sm transition-all duration-200';
+const base =
+  'font-semibold py-2 px-5 rounded-sm transition-all duration-200 flex justify-center items-center gap-1';
 
 const variantClasses = {
   [ButtonVariants.default]:

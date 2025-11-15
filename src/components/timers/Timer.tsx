@@ -18,6 +18,7 @@ import { Button } from '../buttons/Button';
 import { PRIMARY_SHORTCUTS_TIMER, TimerShortcuts } from '../../constants';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { ButtonVariants } from '../../constants/styles';
+import { PauseIcon, ResetIcon, ResumeIcon, StartIcon } from '../icons';
 
 type TimerProps = {
   title: string;
@@ -60,6 +61,19 @@ export const Timer = ({
     focus: focusKey,
   } = shortcuts;
   const formattedTimer = useMemo(() => formatTimer(timer), [timer]);
+
+  // CSS
+  const [currentTimerColor, setCurrentTimerColor] = useState({
+    bg: 'bg-slate-900',
+    border: 'border-slate-900',
+  });
+  const styles = getComputedStyle(document.documentElement);
+  const backgroundColor = '#fff';
+  const accentColor = styles.getPropertyValue('--color-slate-900');
+  const iconDimensions = {
+    width: '18px',
+    height: '18px',
+  };
 
   const revertTimer = (initialTimer: TimerType) => {
     const resumedTimer = secondsToTimer(initialTimerRef.current);
@@ -152,6 +166,20 @@ export const Timer = ({
     return () => stopTimer(timerIntervalRef.current);
   }, []);
 
+  useEffect(() => {
+    if (isTimerPaused) {
+      setCurrentTimerColor({
+        bg: 'bg-yellow-500',
+        border: 'border-yellow-500',
+      });
+    } else {
+      setCurrentTimerColor({
+        bg: 'bg-slate-900',
+        border: 'border-slate-900',
+      });
+    }
+  }, [isTimerPaused]);
+
   useKeyboardShortcut(focusKey, () => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -179,12 +207,16 @@ export const Timer = ({
           autoComplete="off"
         />
       </form>
-      <p className="mt-5 bg-slate-900 text-white px-2 py-1 rounded-md text-center text-3xl rounded-b-none">
+      <p
+        className={`mt-5 ${currentTimerColor.bg} text-white px-2 py-1 rounded-md text-center text-3xl rounded-b-none`}
+      >
         {formattedTimer}
       </p>
-      <div className="w-full bg-stone-50 rounded-md h-8 flex items-center border-slate-900 border-2 rounded-t-none">
+      <div
+        className={`w-full bg-stone-50 rounded-md h-8 flex items-center ${currentTimerColor.border} border-2 rounded-t-none`}
+      >
         <div
-          className="bg-slate-900 h-3 rounded-full mx-1 transition-all duration-500"
+          className={`${currentTimerColor.bg} h-3 rounded-full mx-1 transition-all duration-500`}
           style={{ width: `${(progressRatio * 100).toFixed(2)}%` }}
         ></div>
       </div>
@@ -198,6 +230,7 @@ export const Timer = ({
             fullWidth
             variant={ButtonVariants.outline}
           >
+            <StartIcon width={'20px'} height={'20px'} color={accentColor} />
             Start
           </Button>
         </div>
@@ -205,6 +238,19 @@ export const Timer = ({
       {hasTimerStarted && (
         <div className="mt-2 flex gap-3">
           <Button onClick={handleTogglePause} fullWidth>
+            {isTimerPaused ? (
+              <ResumeIcon
+                width={iconDimensions.width}
+                height={iconDimensions.height}
+                color={backgroundColor}
+              />
+            ) : (
+              <PauseIcon
+                width={iconDimensions.width}
+                height={iconDimensions.height}
+                color={backgroundColor}
+              />
+            )}
             {isTimerPaused ? 'Resume' : 'Pause'}
           </Button>
           <Button
@@ -212,6 +258,11 @@ export const Timer = ({
             variant={ButtonVariants.danger}
             fullWidth
           >
+            <ResetIcon
+              width={iconDimensions.width}
+              height={iconDimensions.height}
+              color={backgroundColor}
+            />
             Reset
           </Button>
         </div>

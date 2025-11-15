@@ -1,4 +1,10 @@
-export const DeleteIcon = ({ width, height, color }) => {
+type DeleteIconProps = {
+  width?: string | number;
+  height?: string | number;
+  color?: string;
+};
+
+export const DeleteIcon = ({ width, height, color }: DeleteIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

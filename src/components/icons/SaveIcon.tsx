@@ -1,4 +1,10 @@
-export const SaveIcon = ({ width, height, color }) => {
+type SaveIconProps = {
+  width?: string | number;
+  height?: string | number;
+  color?: string;
+};
+
+export const SaveIcon = ({ width, height, color }: SaveIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
