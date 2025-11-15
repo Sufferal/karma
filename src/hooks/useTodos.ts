@@ -4,7 +4,7 @@ import {
   getLocalStorageItem,
   setLocalStorageItem,
 } from '../utils/localStorage';
-import { MOCK_TODOS } from '../mocks/todo';
+import { MOCK_TODOS } from '../mocks/todos';
 
 function useTodos() {
   const [todos, setTodos] = useState(

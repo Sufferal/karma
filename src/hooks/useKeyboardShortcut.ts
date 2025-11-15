@@ -3,8 +3,9 @@ import { BLOCKED_TAGS, KEY_DOWN } from '../constants';
 
 function useKeyboardShortcut(key = '', cb = () => {}) {
   useEffect(() => {
-    const handleKeyDown = e => {
-      if (e.key === key && !BLOCKED_TAGS.includes(e.target.tagName)) {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (e.key === key && target && !BLOCKED_TAGS.includes(target.tagName)) {
         e.preventDefault();
         cb();
       }

@@ -1,17 +1,26 @@
 import { HOUR_TO_SEC, MIN_TO_SEC } from '../constants';
 
-export const validateTimer = (timer = '', delimiter = ':') => {
-  if (typeof timer !== 'string')
+export type Timer = {
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+};
+
+export const validateTimer = (
+  timerInput: string = '',
+  delimiter: string = ':'
+) => {
+  if (typeof timerInput !== 'string')
     return { isValid: false, errorMsg: 'The value must be a string.' };
 
   const timerRegex = /^[0-9:]+$/g;
-  if (!timerRegex.test(timer))
+  if (!timerRegex.test(timerInput))
     return {
       isValid: false,
       errorMsg: 'It must contain only numbers and colon :',
     };
 
-  const time = timer.split(delimiter);
+  const time = timerInput.split(delimiter);
   if (!time.length || time.length > 3) {
     return {
       isValid: false,
@@ -36,7 +45,30 @@ export const validateTimer = (timer = '', delimiter = ':') => {
   return { isValid: true, message: 'Timer is valid' };
 };
 
-export const formatTimer = (timer = {}) => {
+const getRandomTimerFinishedMessage = () => {
+  const messages = [
+    'YEET',
+    'bruh, the grind stops here',
+    'big oof',
+    'vibing time',
+    'ok boomer',
+    'time to rest fr fr',
+    'nap incoming',
+    "sheesh, timer's done",
+    'chill mode',
+    'rest time',
+    'no cap, take a breather',
+    'skrrt skrrt, exit grind',
+    'fr fr',
+    'no cap, relax',
+    'mood: chill vibes',
+    "sus? nah, it's chill time",
+  ];
+
+  return messages[Math.floor(Math.random() * messages.length)];
+};
+
+export const formatTimer = (timer: Timer = {}) => {
   if (!Object.keys(timer).length) {
     throw new Error('Cannot display an empty timer');
   }
@@ -46,7 +78,7 @@ export const formatTimer = (timer = {}) => {
   const paddedSeconds = String(timer.seconds).padStart(2, '0');
 
   if (!timer.hours && !timer.minutes && !timer.seconds) {
-    return 'Timer Finished +';
+    return getRandomTimerFinishedMessage();
   }
 
   if (!timer.hours && !timer.minutes) {
@@ -60,7 +92,7 @@ export const formatTimer = (timer = {}) => {
   return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
 };
 
-export const secondsToTimer = seconds => {
+export const secondsToTimer = (seconds: number) => {
   return {
     hours: Math.floor(seconds / HOUR_TO_SEC),
     minutes: Math.floor((seconds % HOUR_TO_SEC) / 60),
@@ -68,7 +100,7 @@ export const secondsToTimer = seconds => {
   };
 };
 
-export const stringToTimer = (str = '') => {
+export const stringToTimer = (str: string = '') => {
   if (typeof str !== 'string' || !str.length) return '';
   const parts = str.split(':').map(Number);
   // Array destructuring then pulls the values from the reversed array.
@@ -77,16 +109,25 @@ export const stringToTimer = (str = '') => {
   return parts.reverse();
 };
 
-export const getTotalSeconds = (hours = 0, minutes = 0, seconds = 0) => {
+export const getTotalSeconds = (
+  hours: number = 0,
+  minutes: number = 0,
+  seconds: number = 0
+) => {
   return hours * HOUR_TO_SEC + minutes * MIN_TO_SEC + seconds;
 };
 
-export const getNextTickTimer = (timer = {}) => {
-  if (!Object.keys(timer).length) {
+export const getNextTickTimer = (timer: Timer = {}) => {
+  if (!timer) {
     throw new Error('Cannot start an empty timer');
   }
 
-  if (timer.hours > 0 && !timer.seconds && !timer.seconds) {
+  if (
+    timer.hours !== undefined &&
+    timer.hours > 0 &&
+    !timer.seconds &&
+    !timer.seconds
+  ) {
     return {
       hours: timer.hours - 1,
       minutes: 59,
@@ -94,7 +135,7 @@ export const getNextTickTimer = (timer = {}) => {
     };
   }
 
-  if (timer.minutes > 0 && !timer.seconds) {
+  if (timer.minutes !== undefined && timer.minutes > 0 && !timer.seconds) {
     return {
       ...timer,
       minutes: timer.minutes - 1,
@@ -102,14 +143,20 @@ export const getNextTickTimer = (timer = {}) => {
     };
   }
 
-  return {
-    ...timer,
-    seconds: timer.seconds - 1,
-  };
+  if (timer.seconds !== undefined) {
+    return {
+      ...timer,
+      seconds: timer.seconds - 1,
+    };
+  }
 };
 
-export const startTimer = (initialSeconds = 0, timer = {}, setTimer) => {
-  if (!Object.keys(timer).length) {
+export const startTimer = (
+  initialSeconds: number = 0,
+  timer: Timer = {},
+  setTimer: React.Dispatch<React.SetStateAction<Timer>>
+) => {
+  if (!timer) {
     throw new Error('Cannot start an empty timer');
   }
 
@@ -124,4 +171,9 @@ export const startTimer = (initialSeconds = 0, timer = {}, setTimer) => {
   return intervalId;
 };
 
-export const stopTimer = timerId => clearInterval(timerId);
+export type IntervalId = ReturnType<typeof setInterval>;
+export const stopTimer = (timerId: IntervalId | null) => {
+  if (timerId) {
+    clearInterval(timerId);
+  }
+};

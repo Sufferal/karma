@@ -19,17 +19,17 @@
 }
 
 @theme {
-  --color-slate-50: oklch(96.9% 0.015 12.422);
-  --color-slate-100: oklch(94.1% 0.03 12.58);
-  --color-slate-200: oklch(89.2% 0.058 10.001);
-  --color-slate-300: oklch(81% 0.117 11.638);
-  --color-slate-400: oklch(71.2% 0.194 13.428);
-  --color-slate-500: oklch(64.5% 0.246 16.439);
-  --color-slate-600: oklch(58.6% 0.253 17.585);
-  --color-slate-700: oklch(51.4% 0.222 16.935);
-  --color-slate-800: oklch(45.5% 0.188 13.697);
-  --color-slate-900: oklch(41% 0.159 10.272);
-  --color-slate-950: oklch(27.1% 0.105 12.094);
+  --color-slate-50: oklch(97% 0.014 254.604);
+  --color-slate-100: oklch(93.2% 0.032 255.585);
+  --color-slate-200: oklch(88.2% 0.059 254.128);
+  --color-slate-300: oklch(80.9% 0.105 251.813);
+  --color-slate-400: oklch(70.7% 0.165 254.624);
+  --color-slate-500: oklch(62.3% 0.214 259.815);
+  --color-slate-600: oklch(54.6% 0.245 262.881);
+  --color-slate-700: oklch(48.8% 0.243 264.376);
+  --color-slate-800: oklch(42.4% 0.199 265.638);
+  --color-slate-900: oklch(37.9% 0.146 265.522);
+  --color-slate-950: oklch(28.2% 0.091 267.935);
 }
 
 :root {
@@ -37,17 +37,18 @@
 }
 
 body,
-input, 
+input,
 textarea {
-  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
 }
 
 svg {
-  transition: all 0.2s ease-in-out; 
+  transition: all 0.2s ease-in-out;
 }
 
 log {
-  transition: display var(--modal-animation-duration) allow-discrete, overlay var(--modal-animation-duration) allow-discrete;
+  transition: display var(--modal-animation-duration) allow-discrete,
+    overlay var(--modal-animation-duration) allow-discrete;
   animation: close var(--modal-animation-duration) forwards;
 }
 

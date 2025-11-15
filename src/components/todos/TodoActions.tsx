@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { COMPLETED, KEYS, UNCHECKED } from '../../constants';
 import { VARIANT } from '../../constants/styles';
 import { Button } from '../buttons/Button';
-import { ConfirmationModal } from '../modals/ConfirmationModal';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 
 export const TodoActions = ({ todos, setTodos }) => {
@@ -35,11 +34,6 @@ export const TodoActions = ({ todos, setTodos }) => {
 
   return (
     <>
-      <ConfirmationModal
-        ref={confirmationDeleteRef}
-        title="Are you sure you want to delete all the tasks?"
-        onSubmit={handleDeleteAll}
-      />
       <div className="flex items-center gap-3">
         <Button onClick={handleToggleCompleteAll} fullWidth>
           {completeStatus} all

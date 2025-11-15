@@ -1,40 +1,49 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Input } from '../inputs/Input';
 import {
   formatTimer,
   getTotalSeconds,
+  IntervalId,
   secondsToTimer,
   startTimer,
   stopTimer,
   stringToTimer,
+  Timer as TimerType,
   validateTimer,
 } from '../../utils/timer';
 import useAudio from '../../hooks/useAudio';
 import { SOUNDPACK } from '../../assets/audio';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '../buttons/Button';
-import { VARIANT } from '../../constants/styles';
-import { PRIMARY_SHORTCUTS_TIMER } from '../../constants';
+import { PRIMARY_SHORTCUTS_TIMER, TimerShortcuts } from '../../constants';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
+import { ButtonVariants } from '../../constants/styles';
+
+type TimerProps = {
+  title: string;
+  defaultTimer: string;
+  shortcuts: TimerShortcuts;
+  endSound: string;
+};
 
 export const Timer = ({
   title,
   defaultTimer = '10:00',
   shortcuts = PRIMARY_SHORTCUTS_TIMER,
-  completeSound = SOUNDPACK.sfxMissionComplete 
-}) => {
+  endSound = SOUNDPACK.sfxMissionComplete,
+}: TimerProps) => {
   const [defaultSeconds = 0, defaultMinutes = 0, defaultHours = 0] =
     stringToTimer(defaultTimer);
-  const [timer, setTimer] = useState({
-    hours: defaultHours ?? 0,
-    minutes: defaultMinutes ?? 50,
-    seconds: defaultSeconds ?? 0,
+  const [timer, setTimer] = useState<TimerType>({
+    hours: +defaultHours,
+    minutes: +defaultMinutes,
+    seconds: +defaultSeconds,
   });
   const initialTimerRef = useRef(1);
-  const timerIntervalRef = useRef(null);
+  const timerIntervalRef = useRef<IntervalId | null>(null);
   const [timerInput, setTimerInput] = useState(defaultTimer);
   const [isTimerPaused, setIsTimerPaused] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | undefined>('');
   const { playSound } = useAudio();
   const currentTimerSeconds = getTotalSeconds(
     timer.hours,
@@ -43,15 +52,16 @@ export const Timer = ({
   );
   const progressRatio = currentTimerSeconds / initialTimerRef.current;
   const hasTimerStarted = !(progressRatio === currentTimerSeconds);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const {
     start: startKey,
     pause: pauseKey,
     reset: resetKey,
     focus: focusKey,
   } = shortcuts;
+  const formattedTimer = useMemo(() => formatTimer(timer), [timer]);
 
-  const revertTimer = initialTimer => {
+  const revertTimer = (initialTimer: TimerType) => {
     const resumedTimer = secondsToTimer(initialTimerRef.current);
     const currentTimer = initialTimer || resumedTimer;
     setTimer(currentTimer);
@@ -67,10 +77,9 @@ export const Timer = ({
     );
   };
 
-  const handleSubmit = (e = null) => {
-    if (e) {
-      e.preventDefault();
-    }
+  const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+
     stopTimer(timerIntervalRef.current);
     const { isValid, errorMsg } = validateTimer(timerInput);
 
@@ -78,8 +87,8 @@ export const Timer = ({
       setError('');
       const [seconds = 0, minutes = 0, hours = 0] = stringToTimer(timerInput);
       setIsTimerPaused(false);
-      setTimer({ hours, minutes, seconds });
-      initialTimerRef.current = getTotalSeconds(hours, minutes, seconds);
+      setTimer({ hours: +hours, minutes: +minutes, seconds: +seconds });
+      initialTimerRef.current = getTotalSeconds(+hours, +minutes, +seconds);
       timerIntervalRef.current = startTimer(
         initialTimerRef.current,
         timer,
@@ -122,16 +131,20 @@ export const Timer = ({
     stopTimer(timerIntervalRef.current);
     setIsTimerPaused(false);
     revertTimer({
-      hours: defaultHours,
-      minutes: defaultMinutes,
-      seconds: defaultSeconds,
+      hours: +defaultHours,
+      minutes: +defaultMinutes,
+      seconds: +defaultSeconds,
     });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTimerInput(e.target.value);
   };
 
   useEffect(() => {
     if (!timer.hours && !timer.minutes && !timer.seconds) {
       stopTimer(timerIntervalRef.current);
-      playSound(completeSound);
+      playSound(endSound);
     }
   }, [timer]);
 
@@ -139,7 +152,11 @@ export const Timer = ({
     return () => stopTimer(timerIntervalRef.current);
   }, []);
 
-  useKeyboardShortcut(focusKey, () => inputRef.current.focus());
+  useKeyboardShortcut(focusKey, () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  });
   useKeyboardShortcut(startKey, handleSubmit);
   useKeyboardShortcut(
     pauseKey,
@@ -149,14 +166,13 @@ export const Timer = ({
 
   return (
     <div className="inline-flex flex-col w-96">
-      <h2 className="font-semibold text-4xl mb-4">{title}</h2>
+      <h2 className="font-semibold text-4xl mb-4 text-center">{title}</h2>
       <form onSubmit={handleSubmit}>
         <Input
           ref={inputRef}
           id={uuidv4()}
           value={timerInput}
-          onChange={e => setTimerInput(e.target.value)}
-          label="Timer"
+          onChange={handleChange}
           placeholder="hh:mm:ss"
           error={error}
           required
@@ -164,7 +180,7 @@ export const Timer = ({
         />
       </form>
       <p className="mt-5 bg-slate-900 text-white px-2 py-1 rounded-md text-center text-3xl rounded-b-none">
-        {formatTimer(timer)}
+        {formattedTimer}
       </p>
       <div className="w-full bg-stone-50 rounded-md h-8 flex items-center border-slate-900 border-2 rounded-t-none">
         <div
@@ -174,7 +190,14 @@ export const Timer = ({
       </div>
       {!hasTimerStarted && (
         <div className="mt-3">
-          <Button onClick={handleSubmit} fullWidth variant={VARIANT.outline}>
+          <Button
+            onClick={e => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+            fullWidth
+            variant={ButtonVariants.outline}
+          >
             Start
           </Button>
         </div>
@@ -184,7 +207,11 @@ export const Timer = ({
           <Button onClick={handleTogglePause} fullWidth>
             {isTimerPaused ? 'Resume' : 'Pause'}
           </Button>
-          <Button onClick={handleReset} variant={VARIANT.danger} fullWidth>
+          <Button
+            onClick={handleReset}
+            variant={ButtonVariants.danger}
+            fullWidth
+          >
             Reset
           </Button>
         </div>

@@ -1,7 +1,22 @@
 import clsx from 'clsx';
 import { motion } from 'motion/react';
 
-export const Input = ({ label, id, error, className, ref, ...props }) => {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  ref: React.RefObject<HTMLInputElement>;
+  id: string;
+  label?: string;
+  className?: string;
+  error?: string;
+};
+
+export const Input = ({
+  label,
+  id,
+  error,
+  className,
+  ref,
+  ...props
+}: InputProps) => {
   if (props.type === 'checkbox') {
     const labelStyles =
       "absolute top-0 left-0 w-6 h-6 rounded-full cursor-pointer bg-white border border-slate-900 after:border-2 after:border-white after:border-t-0 after:border-r-0 after:content-[''] after:absolute after:h-[6px] after:w-3 after:-rotate-45 after:left-[5px] after:top-[6px]";

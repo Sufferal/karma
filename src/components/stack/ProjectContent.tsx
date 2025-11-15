@@ -2,7 +2,6 @@ import { AnimatePresence } from 'motion/react';
 import TodoForm from '../forms/TodoForm';
 import Todo from '../todos/Todo';
 import { TodoActions } from '../todos/TodoActions';
-import { motion } from 'motion/react';
 
 export const ProjectContent = ({
   projectName,
