@@ -63,6 +63,7 @@ export const Timer = ({
   const formattedTimer = useMemo(() => formatTimer(timer), [timer]);
 
   // CSS
+  const pausedTimerColor = 'yellow-500';
   const [currentTimerColor, setCurrentTimerColor] = useState({
     bg: 'bg-slate-900',
     border: 'border-slate-900',
@@ -169,8 +170,8 @@ export const Timer = ({
   useEffect(() => {
     if (isTimerPaused) {
       setCurrentTimerColor({
-        bg: 'bg-yellow-500',
-        border: 'border-yellow-500',
+        bg: `bg-${pausedTimerColor}`,
+        border: `border-${pausedTimerColor}`,
       });
     } else {
       setCurrentTimerColor({
@@ -237,7 +238,11 @@ export const Timer = ({
       )}
       {hasTimerStarted && (
         <div className="mt-2 flex gap-3">
-          <Button onClick={handleTogglePause} fullWidth>
+          <Button
+            className={`${!isTimerPaused ? `bg-${pausedTimerColor}!` : ''}`}
+            onClick={handleTogglePause}
+            fullWidth
+          >
             {isTimerPaused ? (
               <ResumeIcon
                 width={iconDimensions.width}
