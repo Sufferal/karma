@@ -53,7 +53,7 @@ function App() {
 
   if (appMode === AppMode.plan) {
     return (
-      <div className="w-screen min-h-screen flex flex-col justify-center items-center">
+      <div className="w-screen min-h-screen flex flex-col justify-center items-center mt-5">
         <Stack />
       </div>
     );
