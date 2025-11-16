@@ -45,7 +45,7 @@ function App() {
 
   if (appMode === AppMode.focus) {
     return (
-      <div className="w-screen h-screen flex flex-col justify-center items-center gap-10">
+      <div className="w-screen min-h-screen flex flex-col justify-center items-center gap-10">
         <TimerList />
       </div>
     );
@@ -53,7 +53,7 @@ function App() {
 
   if (appMode === AppMode.plan) {
     return (
-      <div className="w-screen h-screen flex flex-col justify-center items-center">
+      <div className="w-screen min-h-screen flex flex-col justify-center items-center">
         <Stack />
       </div>
     );
@@ -61,7 +61,7 @@ function App() {
 
   return (
     <main>
-      <section className="w-screen h-screen flex justify-center items-center gap-20">
+      <section className="w-screen min-h-screen flex justify-center items-center gap-20">
         <div className="mt-10 ml-10 flex gap-10">
           <Stack />
         </div>
