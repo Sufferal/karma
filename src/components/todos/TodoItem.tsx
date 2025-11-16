@@ -10,6 +10,12 @@ import { SOUNDPACK } from '../../assets/audio';
 import { motion } from 'framer-motion';
 import { edit, remove, Todo } from '../../store/slices/todoSlice';
 import { useDispatch } from 'react-redux';
+import { Circle } from '../common/shapes/Circle';
+import { TopPriority } from '../common/priorities/TopPriority';
+import { HighPriority } from '../common/priorities/HighPriority';
+import { MediumPriority } from '../common/priorities/MediumPriority';
+import { LowPriority } from '../common/priorities/LowPriority';
+import { displayFormattedTodo, getPriorityFromText } from '../../utils/todo';
 
 type TodoItemProps = {
   todo: Todo;
@@ -19,7 +25,6 @@ type TodoItemProps = {
 
 export const TodoItem = ({ todo }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
   const [newTodo, setNewTodo] = useState(todo.name || '');
   const editInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -30,8 +35,17 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
   const styles = getComputedStyle(document.documentElement);
   const accentColor = styles.getPropertyValue('--color-slate-900');
 
+  const displayTodoPriority = () => {
+    let todoPriority = <LowPriority />;
+
+    if (todo.priority === 1) todoPriority = <TopPriority />;
+    if (todo.priority === 2) todoPriority = <HighPriority />;
+    if (todo.priority === 3) todoPriority = <MediumPriority />;
+
+    return todoPriority;
+  };
+
   const handleComplete = () => {
-    setIsCompleted(true);
     playSound(SOUNDPACK.sfxAxeUlt);
     dispatch(remove(todo.id));
   };
@@ -43,14 +57,15 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 
   const handleEditStart = () => setIsEditing(true);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
 
-    if (newTodo) {
+    if (newTodo && newTodo !== todo.name) {
       dispatch(
         edit({
           ...todo,
           name: newTodo,
+          priority: getPriorityFromText(newTodo),
         })
       );
     }
@@ -64,6 +79,10 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
     }
   }, [isEditing]);
 
+  const todoPriority = (
+    <div className="w-6 flex justify-center">{displayTodoPriority()}</div>
+  );
+
   let todoContent = (
     <motion.div
       className="w-full flex items-center justify-between"
@@ -75,7 +94,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
         className="font-semibold cursor-pointer max-w-68 break-words"
         onClick={handleComplete}
       >
-        {todo.name}
+        {displayFormattedTodo(todo.name)}
       </h2>
       <div className="flex items-center gap-1">
         <Button
@@ -108,6 +127,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
             ref={editInputRef}
             value={newTodo}
             onChange={e => setNewTodo(e.target.value)}
+            onBlur={() => handleSubmit()}
           />
           <Button
             variant={ButtonVariants.icon}
@@ -122,15 +142,8 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
   }
 
   return (
-    <li className="flex items-center gap-2">
-      <div className="mr-3">
-        <Input
-          id={todo.id}
-          type="checkbox"
-          checked={isCompleted}
-          onChange={handleComplete}
-        />
-      </div>
+    <li className="flex items-center gap-3 py-3 border-b-[1.5px] border-b-slate-900">
+      {todoPriority}
       {todoContent}
     </li>
   );

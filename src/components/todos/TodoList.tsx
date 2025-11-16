@@ -22,7 +22,7 @@ export const TodoList = ({ items }: TodoListProps) => {
 
   return (
     <div className="w-96">
-      <ul className="mt-5 mb-5 flex flex-col gap-2">
+      <ul className="mt-5 mb-5 flex flex-col">
         <AnimatePresence>
           {items.map(todo => (
             <TodoItem

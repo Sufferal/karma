@@ -4,7 +4,12 @@ import { MOCK_TODOS } from '../../mocks/todos';
 export type Todo = {
   id: string;
   name: string;
+  priority: TodoPriority;
 };
+
+export type TodoPriority = 1 | 2 | 3 | 4;
+export const HIGHEST_PRIORITY: TodoPriority = 1;
+export const LOWEST_PRIORITY: TodoPriority = 4;
 
 export type TodoState = {
   items: Todo[];

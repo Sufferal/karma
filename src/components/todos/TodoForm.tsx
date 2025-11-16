@@ -5,6 +5,7 @@ import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { KEYS } from '../../constants';
 import { add, Todo } from '../../store/slices/todoSlice';
 import { useDispatch } from 'react-redux';
+import { getPriorityFromText } from '../../utils/todo';
 
 const TodoForm = () => {
   const [newTodo, setNewTodo] = useState<string>('');
@@ -24,6 +25,7 @@ const TodoForm = () => {
     const newSubmitTodo: Todo = {
       id: uuidv4(),
       name: newTodo,
+      priority: getPriorityFromText(newTodo),
     };
     dispatch(add(newSubmitTodo));
 

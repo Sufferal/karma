@@ -5,12 +5,14 @@ import TodoForm from '../todos/TodoForm';
 
 export const Stack = () => {
   const todos = useSelector(selectTodos);
-  const reversedTodos = todos.toReversed();
+  const formattedTodos = todos
+    .toReversed()
+    .toSorted((a, b) => a.priority - b.priority);
 
   return (
     <div className="flex flex-col">
       <TodoForm />
-      <TodoList items={reversedTodos} />
+      <TodoList items={formattedTodos} />
     </div>
   );
 };
