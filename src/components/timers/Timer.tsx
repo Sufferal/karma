@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Input } from '../inputs/Input';
+import { Input } from '../common/inputs/Input';
 import {
   formatTimer,
   getTotalSeconds,
@@ -14,11 +14,11 @@ import {
 import useAudio from '../../hooks/useAudio';
 import { SOUNDPACK } from '../../assets/audio';
 import { v4 as uuidv4 } from 'uuid';
-import { Button } from '../buttons/Button';
+import { Button } from '../common/buttons/Button';
 import { PRIMARY_SHORTCUTS_TIMER, TimerShortcuts } from '../../constants';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { ButtonVariants } from '../../constants/styles';
-import { PauseIcon, ResetIcon, ResumeIcon, StartIcon } from '../icons';
+import { PauseIcon, ResetIcon, ResumeIcon, StartIcon } from '../common/icons';
 
 type TimerProps = {
   title: string;

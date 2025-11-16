@@ -35,6 +35,7 @@ import churchBell from './sfx/church_bell.mp3';
 import ding from './sfx/ding.mp3';
 import missionComplete from './sfx/mission_complete.mp3';
 import romanianSensors from './sfx/romanian_sensors.mp3';
+import macTrashSound from './sfx/mac_trash.mp3';
 
 // Songs
 import aroundTheWorld from './songs/around_the_world_la_la_la.mp3';
@@ -69,6 +70,7 @@ export const SOUNDPACK = {
   sfxAxeUlt: axeUlt,
   sfxAroundTheWorld: aroundTheWorld,
   sfxHollowKnightWah: hollowKnightWah,
+  sfxMacTrash: macTrashSound,
 };
 
 export const SOUNDPACK_LENGTH = Object.keys(SOUNDPACK).length;

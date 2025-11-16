@@ -1,62 +1,62 @@
 import { useRef, useEffect, useState } from 'react';
-import { Button } from '../buttons/Button';
-import { Input } from '../inputs/Input';
-import { DeleteIcon } from '../icons/DeleteIcon';
-import { VARIANT } from '../../constants/styles';
-import { EditIcon } from '../icons/EditIcon';
-import { SaveIcon } from '../icons/SaveIcon';
+import { Button } from '../common/buttons/Button';
+import { Input } from '../common/inputs/Input';
+import { DeleteIcon } from '../common/icons/DeleteIcon';
+import { ButtonVariants } from '../../constants/styles';
+import { EditIcon } from '../common/icons/EditIcon';
+import { SaveIcon } from '../common/icons/SaveIcon';
 import useAudio from '../../hooks/useAudio';
 import { SOUNDPACK } from '../../assets/audio';
 import { motion } from 'framer-motion';
+import { edit, remove, Todo } from '../../store/slices/todoSlice';
+import { useDispatch } from 'react-redux';
 
-const Todo = ({ todo, onEdit, onDelete }) => {
+type TodoItemProps = {
+  todo: Todo;
+  onEdit?: () => void;
+  onDelete?: () => void;
+};
+
+export const TodoItem = ({ todo }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(todo.isCompleted || false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [newTodo, setNewTodo] = useState(todo.name || '');
-  const editInputRef = useRef(null);
+  const editInputRef = useRef<HTMLInputElement | null>(null);
+
   const { playSound } = useAudio();
+  const dispatch = useDispatch();
 
   // CSS
   const styles = getComputedStyle(document.documentElement);
   const accentColor = styles.getPropertyValue('--color-slate-900');
 
-  const handleToggleCompleted = () => {
-    // Play sound only when it's not completed
-    if (!isCompleted) {
-      playSound(SOUNDPACK.sfxAxeUlt);
-    }
-    setIsCompleted(prev => !prev);
-    // Delete when task is completed
-    onDelete();
+  const handleComplete = () => {
+    setIsCompleted(true);
+    playSound(SOUNDPACK.sfxAxeUlt);
+    dispatch(remove(todo.id));
   };
 
-  const handleEdit = e => {
-    if (e.relatedTarget?.type === 'submit') {
-      return; // don't exit edit mode if Save button was clicked
-    }
-    setIsEditing(true);
+  const handleDelete = () => {
+    playSound(SOUNDPACK.sfxMacTrash);
+    dispatch(remove(todo.id));
   };
 
-  const handleSubmit = e => {
+  const handleEditStart = () => setIsEditing(true);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (newTodo) {
-      onEdit({
-        ...todo,
-        name: newTodo,
-      });
+      dispatch(
+        edit({
+          ...todo,
+          name: newTodo,
+        })
+      );
     }
+
     setIsEditing(false);
   };
-
-  useEffect(() => {
-    setIsCompleted(todo.isCompleted);
-  }, [todo.isCompleted]);
-
-  useEffect(() => {
-    if (todo.isCompleted !== isCompleted) {
-      onEdit({ ...todo, isCompleted });
-    }
-  }, [isCompleted]);
 
   useEffect(() => {
     if (isEditing && editInputRef.current) {
@@ -73,21 +73,21 @@ const Todo = ({ todo, onEdit, onDelete }) => {
     >
       <h2
         className="font-semibold cursor-pointer max-w-68 break-words"
-        onClick={handleToggleCompleted}
+        onClick={handleComplete}
       >
         {todo.name}
       </h2>
       <div className="flex items-center gap-1">
         <Button
-          variant={VARIANT.icon}
-          onClick={handleEdit}
+          variant={ButtonVariants.icon}
+          onClick={handleEditStart}
           className="[&:hover>svg]:fill-red-500"
         >
           <EditIcon width="24px" height="24px" color={accentColor} />
         </Button>
         <Button
-          variant={VARIANT.icon}
-          onClick={onDelete}
+          variant={ButtonVariants.icon}
+          onClick={handleDelete}
           className="[&:hover>svg]:fill-red-500"
         >
           <DeleteIcon width="24px" height="24px" color={accentColor} />
@@ -95,20 +95,6 @@ const Todo = ({ todo, onEdit, onDelete }) => {
       </div>
     </motion.div>
   );
-
-  if (isCompleted) {
-    todoContent = (
-      <motion.h2
-        className="max-w-88 break-words italic font-semibold bg-slate-900 text-white w-full rounded-sm px-2 py-1 cursor-pointer"
-        onClick={handleToggleCompleted}
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, x: -30 }}
-      >
-        {todo.name}
-      </motion.h2>
-    );
-  }
 
   if (isEditing) {
     todoContent = (
@@ -121,11 +107,10 @@ const Todo = ({ todo, onEdit, onDelete }) => {
             id={todo.name}
             ref={editInputRef}
             value={newTodo}
-            onBlur={handleEdit}
             onChange={e => setNewTodo(e.target.value)}
           />
           <Button
-            variant={VARIANT.icon}
+            variant={ButtonVariants.icon}
             type="submit"
             className="[&:hover>svg]:fill-red-500"
           >
@@ -143,12 +128,10 @@ const Todo = ({ todo, onEdit, onDelete }) => {
           id={todo.id}
           type="checkbox"
           checked={isCompleted}
-          onChange={handleToggleCompleted}
+          onChange={handleComplete}
         />
       </div>
       {todoContent}
     </li>
   );
 };
-
-export default Todo;

@@ -1,10 +1,10 @@
 import clsx from 'clsx';
-import { ButtonVariants } from '../../constants/styles';
+import { ButtonVariants } from '../../../constants/styles';
 import { ReactNode } from 'react';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariants;
-  fullWidth: boolean;
+  fullWidth?: boolean;
   className?: string;
   children: ReactNode;
 };

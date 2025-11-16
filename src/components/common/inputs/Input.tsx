@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { motion } from 'motion/react';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  ref: React.RefObject<HTMLInputElement>;
+  ref?: React.RefObject<HTMLInputElement>;
   id: string;
   label?: string;
   className?: string;

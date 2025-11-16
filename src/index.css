@@ -37,9 +37,11 @@
 }
 
 body,
+button,
 input,
 textarea {
   font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  text-transform: lowercase;
 }
 
 svg {

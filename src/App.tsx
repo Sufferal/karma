@@ -17,23 +17,27 @@ function App() {
     getLocalStorageItem(LS_APP_MODE) || AppMode.default
   );
 
-  const toggleAppMode = (newMode: AppMode) => {
-    setAppMode(prevMode =>
-      prevMode === AppMode.default ? newMode : AppMode.default
-    );
-  };
+  const handleAppModeChange = (newMode: AppMode) => {
+    if (appMode === newMode) return;
 
-  const handleAppModeChange = () => {
+    // No need to confirm it when there are no timers
+    if (appMode === AppMode.plan) {
+      setAppMode(newMode);
+      return;
+    }
+
     const hasUserConfirmed = window.confirm(
-      'Are you sure you want to switch the app mode? All unsaved data will be lost.'
+      'Are you sure you want to switch the app mode? Timer data will be lost.'
     );
+
     if (hasUserConfirmed) {
-      toggleAppMode(AppMode.focus);
+      setAppMode(newMode);
     }
   };
 
-  // TODO: Add other modes later on (only timer, only todos and both)
-  // useKeyboardShortcut(KEYS.F, handleAppModeChange);
+  useKeyboardShortcut(KEYS.D, () => handleAppModeChange(AppMode.default));
+  useKeyboardShortcut(KEYS.F, () => handleAppModeChange(AppMode.focus));
+  useKeyboardShortcut(KEYS.S, () => handleAppModeChange(AppMode.plan));
 
   useEffect(() => {
     setLocalStorageItem(LS_APP_MODE, appMode);
@@ -47,13 +51,20 @@ function App() {
     );
   }
 
+  if (appMode === AppMode.plan) {
+    return (
+      <div className="w-screen h-screen flex flex-col justify-center items-center">
+        <Stack />
+      </div>
+    );
+  }
+
   return (
     <main>
-      <section className="w-screen h-screen flex justify-center items-center">
-        {/* TODO: Add this later */}
-        {/* <div className="mt-10 ml-10 flex gap-10">
+      <section className="w-screen h-screen flex justify-center items-center gap-20">
+        <div className="mt-10 ml-10 flex gap-10">
           <Stack />
-        </div> */}
+        </div>
         <div className="flex flex-col gap-10">
           <TimerList />
         </div>
