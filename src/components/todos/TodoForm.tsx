@@ -3,7 +3,11 @@ import { Input } from '../common/inputs/Input';
 import { v4 as uuidv4 } from 'uuid';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { KEYS } from '../../constants';
-import { add, Todo } from '../../store/slices/todoSlice';
+import {
+  add as addTodo,
+  DEFAULT_TODO_STATUS,
+  Todo,
+} from '../../store/slices/todoSlice';
 import { useDispatch } from 'react-redux';
 import { getPriorityFromText } from '../../utils/todo';
 
@@ -26,8 +30,9 @@ const TodoForm = () => {
       id: uuidv4(),
       name: newTodo,
       priority: getPriorityFromText(newTodo),
+      status: DEFAULT_TODO_STATUS,
     };
-    dispatch(add(newSubmitTodo));
+    dispatch(addTodo(newSubmitTodo));
 
     setNewTodo('');
   };

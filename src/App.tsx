@@ -61,11 +61,11 @@ function App() {
 
   return (
     <main>
-      <section className="w-screen min-h-screen flex justify-center items-center gap-20">
-        <div className="mt-10 ml-10 flex gap-10">
+      <section className="w-screen min-h-screen flex justify-center gap-20">
+        <div className="flex gap-10 mt-10">
           <Stack />
         </div>
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-10 mt-4">
           <TimerList />
         </div>
       </section>

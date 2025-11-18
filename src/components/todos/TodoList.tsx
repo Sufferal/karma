@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'motion/react';
 import { TodoItem } from './TodoItem';
-import { Todo } from '../../store/slices/todoSlice';
+import { Todo, TodoPriority } from '../../store/slices/todoSlice';
 
 type TodoListProps = {
   items: Todo[];
@@ -20,19 +20,34 @@ export const TodoList = ({ items }: TodoListProps) => {
     );
   }
 
+  const groupedItemsByCategory = Object.groupBy(items, item => item.priority);
+  const priorityKeys = Object.keys(groupedItemsByCategory).map(
+    Number
+  ) as TodoPriority[];
+
   return (
     <div className="w-96">
       <ul className="mt-5 mb-5 flex flex-col">
-        <AnimatePresence>
-          {items.map(todo => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onEdit={() => {}}
-              onDelete={() => {}}
-            />
-          ))}
-        </AnimatePresence>
+        {priorityKeys.map((priority: TodoPriority) => (
+          <div
+            key={`priority-${priority}`}
+            className="border-b-3 border-b-slate-500"
+          >
+            <p className="mt-3 italic">
+              Priority <span className="font-medium">#{priority}</span>
+            </p>
+            <AnimatePresence>
+              {groupedItemsByCategory[priority]?.map(todo => (
+                <TodoItem
+                  key={todo.id}
+                  todo={todo}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        ))}
       </ul>
     </div>
   );

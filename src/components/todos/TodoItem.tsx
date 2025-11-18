@@ -8,9 +8,12 @@ import { SaveIcon } from '../common/icons/SaveIcon';
 import useAudio from '../../hooks/useAudio';
 import { SOUNDPACK } from '../../assets/audio';
 import { motion } from 'framer-motion';
-import { edit, remove, Todo } from '../../store/slices/todoSlice';
+import {
+  edit as editTodo,
+  remove as removeTodo,
+  Todo,
+} from '../../store/slices/todoSlice';
 import { useDispatch } from 'react-redux';
-import { Circle } from '../common/shapes/Circle';
 import { TopPriority } from '../common/priorities/TopPriority';
 import { HighPriority } from '../common/priorities/HighPriority';
 import { MediumPriority } from '../common/priorities/MediumPriority';
@@ -27,13 +30,14 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newTodo, setNewTodo] = useState(todo.name || '');
   const editInputRef = useRef<HTMLInputElement | null>(null);
-
   const { playSound } = useAudio();
   const dispatch = useDispatch();
+  const isTodoActive = todo.status === 'active';
 
   // CSS
   const styles = getComputedStyle(document.documentElement);
   const accentColor = styles.getPropertyValue('--color-slate-900');
+  const inProgressClasses = 'bg-red-500 rounded px-3 py-2 text-white';
 
   const displayTodoPriority = () => {
     let todoPriority = <LowPriority />;
@@ -47,12 +51,12 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 
   const handleComplete = () => {
     playSound(SOUNDPACK.sfxAxeUlt);
-    dispatch(remove(todo.id));
+    dispatch(removeTodo(todo.id));
   };
 
   const handleDelete = () => {
     playSound(SOUNDPACK.sfxMacTrash);
-    dispatch(remove(todo.id));
+    dispatch(removeTodo(todo.id));
   };
 
   const handleEditStart = () => setIsEditing(true);
@@ -62,7 +66,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 
     if (newTodo && newTodo !== todo.name) {
       dispatch(
-        edit({
+        editTodo({
           ...todo,
           name: newTodo,
           priority: getPriorityFromText(newTodo),
@@ -71,6 +75,16 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
     }
 
     setIsEditing(false);
+  };
+
+  const handleTodoProgress = () => {
+    const newStatus = todo.status === 'idle' ? 'active' : 'idle';
+    dispatch(
+      editTodo({
+        ...todo,
+        status: newStatus,
+      })
+    );
   };
 
   useEffect(() => {
@@ -85,7 +99,9 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 
   let todoContent = (
     <motion.div
-      className="w-full flex items-center justify-between"
+      className={`w-full flex items-center justify-between ${
+        isTodoActive ? inProgressClasses : ''
+      }`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, x: -30 }}
@@ -96,7 +112,18 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
       >
         {displayFormattedTodo(todo.name)}
       </h2>
-      <div className="flex items-center gap-1">
+      <div
+        className={`flex items-center gap-2 ${
+          isTodoActive ? 'bg-white py-1 px-2 rounded' : ''
+        }`}
+      >
+        <Button
+          className="text-slate-900 text-2xl"
+          variant={ButtonVariants.icon}
+          onClick={handleTodoProgress}
+        >
+          {isTodoActive ? '↓' : '↑'}
+        </Button>
         <Button
           variant={ButtonVariants.icon}
           onClick={handleEditStart}
@@ -142,7 +169,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
   }
 
   return (
-    <li className="flex items-center gap-3 py-3 border-b-[1.5px] border-b-slate-900">
+    <li className="flex items-center gap-3 py-3">
       {todoPriority}
       {todoContent}
     </li>

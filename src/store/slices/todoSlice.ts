@@ -5,11 +5,14 @@ export type Todo = {
   id: string;
   name: string;
   priority: TodoPriority;
+  status: TodoStatus;
 };
 
 export type TodoPriority = 1 | 2 | 3 | 4;
 export const HIGHEST_PRIORITY: TodoPriority = 1;
 export const LOWEST_PRIORITY: TodoPriority = 4;
+export type TodoStatus = 'idle' | 'active';
+export const DEFAULT_TODO_STATUS: TodoStatus = 'idle';
 
 export type TodoState = {
   items: Todo[];

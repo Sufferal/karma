@@ -16,7 +16,7 @@ export const TimerList = () => {
       />
       <Timer
         title="Eye break"
-        defaultTimer="20:00"
+        defaultTimer="25:00"
         shortcuts={SECONDARY_SHORTCUTS_TIMER}
         endSound={SOUNDPACK.sfxAmongUsReveal}
       />
