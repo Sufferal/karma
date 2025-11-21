@@ -5,6 +5,7 @@ import './index.css';
 import { AudioProvider } from './store/contexts/AudioContext';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { AnimationProvider } from './store/contexts/AnimationContext';
 
 const rootContainer = document.getElementById('root');
 
@@ -17,9 +18,11 @@ if (!rootContainer) {
 ReactDOM.createRoot(rootContainer).render(
   <React.StrictMode>
     <Provider store={store}>
-      <AudioProvider>
-        <App />
-      </AudioProvider>
+      <AnimationProvider>
+        <AudioProvider>
+          <App />
+        </AudioProvider>
+      </AnimationProvider>
     </Provider>
   </React.StrictMode>
 );

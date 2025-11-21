@@ -45,7 +45,7 @@ export const validateTimer = (
   return { isValid: true, message: 'Timer is valid' };
 };
 
-const getRandomTimerFinishedMessage = () => {
+export const getRandomTimerFinishedMessage = () => {
   const messages = [
     'YEET',
     'bruh, the grind stops here',

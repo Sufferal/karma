@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Button } from '../common/buttons/Button';
 import { Input } from '../common/inputs/Input';
 import { DeleteIcon } from '../common/icons/DeleteIcon';
-import { ButtonVariants } from '../../constants/styles';
+import { ButtonVariants, tailWindColors } from '../../constants/styles';
 import { EditIcon } from '../common/icons/EditIcon';
 import { SaveIcon } from '../common/icons/SaveIcon';
 import useAudio from '../../hooks/useAudio';
@@ -18,20 +18,27 @@ import { TopPriority } from '../common/priorities/TopPriority';
 import { HighPriority } from '../common/priorities/HighPriority';
 import { MediumPriority } from '../common/priorities/MediumPriority';
 import { LowPriority } from '../common/priorities/LowPriority';
-import { displayFormattedTodo, getPriorityFromText } from '../../utils/todo';
+import {
+  displayFormattedTodo,
+  getPriorityFromText,
+  getRandomCompleteMessage,
+} from '../../utils/todo';
+import useAnimation from '../../hooks/useAnimation';
 
 type TodoItemProps = {
   todo: Todo;
-  onEdit?: () => void;
-  onDelete?: () => void;
 };
 
 export const TodoItem = ({ todo }: TodoItemProps) => {
+  const dispatch = useDispatch();
+
   const [isEditing, setIsEditing] = useState(false);
   const [newTodo, setNewTodo] = useState(todo.name || '');
   const editInputRef = useRef<HTMLInputElement | null>(null);
+
   const { playSound } = useAudio();
-  const dispatch = useDispatch();
+  const { triggerFlash } = useAnimation();
+
   const isTodoActive = todo.status === 'active';
 
   // CSS
@@ -50,6 +57,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
   };
 
   const handleComplete = () => {
+    triggerFlash(tailWindColors['red-500'], getRandomCompleteMessage());
     playSound(SOUNDPACK.sfxAxeUlt);
     dispatch(removeTodo(todo.id));
   };

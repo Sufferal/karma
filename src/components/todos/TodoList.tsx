@@ -27,7 +27,7 @@ export const TodoList = ({ items }: TodoListProps) => {
 
   return (
     <div className="w-96">
-      <ul className="mt-5 mb-5 flex flex-col">
+      <ul className="flex flex-col">
         {priorityKeys.map((priority: TodoPriority) => (
           <div
             key={`priority-${priority}`}
@@ -38,12 +38,7 @@ export const TodoList = ({ items }: TodoListProps) => {
             </p>
             <AnimatePresence>
               {groupedItemsByCategory[priority]?.map(todo => (
-                <TodoItem
-                  key={todo.id}
-                  todo={todo}
-                  onEdit={() => {}}
-                  onDelete={() => {}}
-                />
+                <TodoItem key={todo.id} todo={todo} />
               ))}
             </AnimatePresence>
           </div>

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { Input } from '../common/inputs/Input';
 import {
   formatTimer,
+  getRandomTimerFinishedMessage,
   getTotalSeconds,
   IntervalId,
   secondsToTimer,
@@ -17,8 +18,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button } from '../common/buttons/Button';
 import { PRIMARY_SHORTCUTS_TIMER, TimerShortcuts } from '../../constants';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
-import { ButtonVariants } from '../../constants/styles';
+import { ButtonVariants, tailWindColors } from '../../constants/styles';
 import { PauseIcon, ResetIcon, ResumeIcon, StartIcon } from '../common/icons';
+import useAnimation from '../../hooks/useAnimation';
+import { getRandomCompleteMessage } from '../../utils/todo';
 
 type TimerProps = {
   title: string;
@@ -61,6 +64,7 @@ export const Timer = ({
     focus: focusKey,
   } = shortcuts;
   const formattedTimer = useMemo(() => formatTimer(timer), [timer]);
+  const { triggerFlash } = useAnimation();
 
   // CSS
   const [currentTimerColor, setCurrentTimerColor] = useState({
@@ -159,6 +163,7 @@ export const Timer = ({
     if (!timer.hours && !timer.minutes && !timer.seconds) {
       stopTimer(timerIntervalRef.current);
       playSound(endSound);
+      triggerFlash(tailWindColors['blue-600'], getRandomTimerFinishedMessage());
     }
   }, [timer]);
 
